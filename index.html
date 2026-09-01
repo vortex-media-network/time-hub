@@ -2,30 +2,348 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Elite Watch Store</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #f1f3f6;
+      color: #212121;
+    }
+
+    .app-container {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #ffffff;
+      position: relative;
+    }
+
+    /* Top Bar */
+    .store-header {
+      background: #ffffff;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e0e0e0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .store-header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #9c27b0;
+    }
+
+    /* 2 Column Home Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 8px;
+      background: #f1f3f6;
+    }
+
+    .product-card {
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #eeeeee;
+    }
+
+    .product-card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      background: #f8f8f8;
+      display: block;
+    }
+
+    .card-info {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-title {
+      font-size: 12px;
+      color: #555555;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .price {
+      font-size: 15px;
+      font-weight: 700;
+      color: #212121;
+    }
+
+    .mrp {
+      font-size: 11px;
+      color: #878787;
+      text-decoration: line-through;
+    }
+
+    .discount {
+      font-size: 11px;
+      color: #038d63;
+      font-weight: 700;
+    }
+
+    .rating-badge {
+      font-size: 10px;
+      background: #2e7d32;
+      color: #ffffff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      width: fit-content;
+      font-weight: 600;
+    }
+
+    /* Product Details Page */
+    #productDetailsView {
+      display: none;
+      padding-bottom: 90px;
+      background: #ffffff;
+    }
+
+    .nav-bar-detail {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid #eeeeee;
+      background: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .back-btn {
+      background: #f3e5f5;
+      border: none;
+      color: #9c27b0;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .main-view-box {
+      width: 100%;
+      background: #f8f8f8;
+      text-align: center;
+    }
+
+    .main-view-img {
+      width: 100%;
+      max-height: 380px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Thumbnail Gallery Row */
+    .gallery-row {
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 10px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      background: #fafafa;
+      border-bottom: 1px solid #eeeeee;
+      white-space: nowrap;
+    }
+
+    .thumb-item {
+      width: 65px !important;
+      height: 65px !important;
+      min-width: 65px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #dddddd;
+      cursor: pointer;
+      display: inline-block;
+      background: #ffffff;
+    }
+
+    .thumb-item.active {
+      border-color: #9c27b0 !important;
+      box-shadow: 0 0 5px rgba(156, 39, 176, 0.5);
+    }
+
+    .detail-info {
+      padding: 14px;
+    }
+
+    .detail-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #212121;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .desc-card {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      margin: 12px 0;
+      font-size: 13px;
+      color: #334155;
+      white-space: pre-line;
+      line-height: 1.6;
+    }
+
+    /* Bottom Floating Buy Bar */
+    .bottom-buy-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      padding: 10px 14px;
+      box-shadow: 0 -3px 12px rgba(0,0,0,0.1);
+      z-index: 99;
+    }
+
+    .buy-now-trigger {
+      width: 100%;
+      background: #9c27b0;
+      color: #ffffff;
+      border: none;
+      padding: 14px 0;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(156, 39, 176, 0.4);
+    }
+
+    /* Order Address Modal Popup */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px 16px 0 0;
+      padding: 18px 16px;
+      max-height: 85vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 26px;
+      border: none;
+      background: none;
+      color: #777777;
+      cursor: pointer;
+    }
+
+    .form-group {
+      margin-bottom: 11px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #424242;
+      margin-bottom: 4px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: #9c27b0;
+      color: #ffffff;
+      border: none;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    #successView {
+      display: none;
+      text-align: center;
+      padding: 20px 0;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="container">
+  <div class="app-container">
     
-    <!-- 1. Store Home View -->
     <div id="storeView">
-      <div class="top-header">
+      <div class="store-header">
         <h1 id="storeTitle">Elite Watch Store</h1>
-        <span style="font-size:11px; color:#2e7d32; font-weight:700;">Cash on Delivery</span>
+        <span style="font-size:11px; color:#2e7d32; font-weight:700;">🚚 Cash on Delivery</span>
       </div>
       <div class="product-grid" id="productsContainer"></div>
     </div>
 
-    <!-- 2. Single Product Details View -->
     <div id="productDetailsView">
       <div class="nav-bar-detail">
-        <button class="back-btn" onclick="showStoreView()">Back to Store</button>
+        <button class="back-btn" onclick="showStoreView()">← All Watches</button>
       </div>
 
-      <img id="detailMainImg" class="main-view-img" src="" alt="Watch">
+      <div class="main-view-box">
+        <img id="detailMainImg" class="main-view-img" src="" alt="Watch">
+      </div>
+
       <div class="gallery-row" id="thumbContainer"></div>
 
       <div class="detail-info">
@@ -37,25 +355,23 @@
           <span class="discount" id="detailDiscount"></span>
         </div>
 
-        <span id="detailRating" class="card-rating" style="margin-bottom: 12px; display:inline-block;"></span>
+        <span id="detailRating" class="rating-badge" style="margin-bottom: 12px; display:inline-block;"></span>
 
         <h3 style="font-size: 13px; font-weight: 700; margin-top: 10px;">Product Description:</h3>
         <div class="desc-card" id="detailDesc"></div>
       </div>
 
-      <!-- Bottom Buy Now Bar -->
       <div class="bottom-buy-bar">
-        <button class="buy-now-trigger" onclick="openOrderModal()">BUY NOW (CASH ON DELIVERY)</button>
+        <button class="buy-now-trigger" onclick="openOrderModal()">⚡ BUY NOW (CASH ON DELIVERY)</button>
       </div>
     </div>
 
-    <!-- 3. Order Address Form Modal -->
     <div class="modal-overlay" id="orderModal">
       <div class="modal-content">
         <button class="close-modal" onclick="closeOrderModal()">&times;</button>
         
         <form id="orderForm">
-          <h3 style="font-size: 14px; margin-bottom: 12px; color: #9c27b0;">Enter Delivery Details</h3>
+          <h3 style="font-size: 15px; margin-bottom: 14px; color: #9c27b0;">Enter Delivery Address</h3>
 
           <div class="form-group">
             <label>Select Color / Strap*</label>
@@ -82,7 +398,7 @@
             <input type="number" id="custPin" placeholder="6-digit PIN code" required>
           </div>
 
-          <button type="submit" class="submit-btn">CONFIRM ORDER</button>
+          <button type="submit" class="submit-btn">CONFIRM ORDER (COD)</button>
         </form>
 
         <div id="successView">
@@ -102,7 +418,7 @@
     let activeProduct = null;
     document.getElementById('storeTitle').innerText = STORE_CONFIG.storeName;
 
-    // Load Grid
+    // Render Home Products Grid
     const container = document.getElementById('productsContainer');
     STORE_CONFIG.products.forEach(p => {
       const card = document.createElement('div');
@@ -117,13 +433,13 @@
             <span class="mrp">${STORE_CONFIG.currency}${p.mrp}</span>
             <span class="discount">${p.discount}</span>
           </div>
-          <span class="card-rating">${p.rating}</span>
+          <span class="rating-badge">${p.rating}</span>
         </div>
       `;
       container.appendChild(card);
     });
 
-    // Open Single Product Page
+    // Open Single Product Details Page
     function openProductPage(id) {
       activeProduct = STORE_CONFIG.products.find(item => item.id === id);
       if(!activeProduct) return;
@@ -140,7 +456,7 @@
       document.getElementById('detailRating').innerText = activeProduct.rating;
       document.getElementById('detailDesc').innerText = activeProduct.description;
 
-      // Gallery Thumbnails
+      // Render 4 Small Thumbnails
       const thumbBox = document.getElementById('thumbContainer');
       thumbBox.innerHTML = '';
       activeProduct.images.forEach((imgUrl, index) => {
@@ -159,9 +475,10 @@
     function showStoreView() {
       document.getElementById('productDetailsView').style.display = 'none';
       document.getElementById('storeView').style.display = 'block';
+      window.scrollTo(0, 0);
     }
 
-    // Modal Control
+    // Modal Form Handlers
     function openOrderModal() {
       const colorSelect = document.getElementById('selectedColor');
       colorSelect.innerHTML = '';
@@ -181,7 +498,7 @@
       document.getElementById('orderModal').style.display = 'none';
     }
 
-    // Submit Order
+    // Handle Order Submission
     document.getElementById('orderForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -198,20 +515,27 @@
         window.open(AD_CONFIG.directLink, '_blank');
       }
 
-      const captionText = `📦 *New Watch Order (ID: #${activeProduct.id})*%0A` +
-                          `⌚ *Product:* ${activeProduct.name}%0A` +
-                          `🎨 *Color:* ${color}%0A` +
-                          `💰 *Price:* ${STORE_CONFIG.currency}${activeProduct.price} (COD)%0A%0A` +
-                          `👤 *Customer:* ${name}%0A` +
-                          `📞 *Phone:* ${phone}%0A` +
-                          `🏠 *Address:* ${address}%0A` +
-                          `📍 *PIN:* ${pin}`;
+      // Complete Order Summary for Telegram
+      const fullOrderText = `📦 *NEW WATCH ORDER (ID: #${activeProduct.id})*\n\n` +
+                            `⌚ *Product:* ${activeProduct.name}\n` +
+                            `🎨 *Color:* ${color}\n` +
+                            `💰 *Price:* ${STORE_CONFIG.currency}${activeProduct.price} (Cash on Delivery)\n` +
+                            `🖼️ *Photo Link:* ${activeProduct.mainImage}\n\n` +
+                            `👤 *Customer Name:* ${name}\n` +
+                            `📞 *Phone Number:* ${phone}\n` +
+                            `🏠 *Delivery Address:* ${address}\n` +
+                            `📍 *PIN Code:* ${pin}`;
 
       if (STORE_CONFIG.telegramBotToken && STORE_CONFIG.telegramChatId) {
-        fetch(`https://api.telegram.org/bot${STORE_CONFIG.telegramBotToken}/sendPhoto?chat_id=${STORE_CONFIG.telegramChatId}&photo=${encodeURIComponent(activeProduct.mainImage)}&caption=${captionText}&parse_mode=Markdown`)
-          .catch(() => {
-            fetch(`https://api.telegram.org/bot${STORE_CONFIG.telegramBotToken}/sendMessage?chat_id=${STORE_CONFIG.telegramChatId}&text=${captionText}&parse_mode=Markdown`);
-          });
+        fetch(`https://api.telegram.org/bot${STORE_CONFIG.telegramBotToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: STORE_CONFIG.telegramChatId,
+            text: fullOrderText,
+            parse_mode: 'Markdown'
+          })
+        });
       }
     });
   </script>

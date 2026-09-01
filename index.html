@@ -81,13 +81,12 @@
         <div class="card-body">
           <span class="badge">Cash on Delivery</span>
           <div class="product-title">${p.name}</div>
-          <div class="product-desc">${p.description}</div>
           <div class="price-row">
             <span class="price">${STORE_CONFIG.currency}${p.price}</span>
             <span class="mrp">${STORE_CONFIG.currency}${p.mrp}</span>
             <span class="discount">${p.discount}</span>
           </div>
-          <button class="buy-btn" onclick="openOrderModal(${p.id})">⚡ BUY NOW (COD)</button>
+          <button class="buy-btn" onclick="openOrderModal(${p.id})">⚡ BUY NOW</button>
         </div>
       `;
       container.appendChild(card);
@@ -135,20 +134,25 @@
         window.open(AD_CONFIG.directLink, '_blank');
       }
 
-      const orderData = `📦 *New Watch Order*%0A` +
-                        `Product: ${currentSelectedProduct.name}%0A` +
-                        `Color: ${color}%0A` +
-                        `Price: ${STORE_CONFIG.currency}${currentSelectedProduct.price} (COD)%0A` +
-                        `Customer: ${name}%0A` +
-                        `Phone: ${phone}%0A` +
-                        `Address: ${address}%0A` +
-                        `PIN: ${pin}`;
+      // ਟੈਲੀਗ੍ਰਾਮ ਮੈਸੇਜ ਵਿੱਚ ਫ਼ੋਟੋ ਅਤੇ ਪ੍ਰੋਡਕਟ ਕੋਡ ਨਾਲ ਭੇਜਣਾ
+      const captionText = `📦 *New Watch Order (ID: #${currentSelectedProduct.id})*%0A` +
+                          `⌚ *Product:* ${currentSelectedProduct.name}%0A` +
+                          `🎨 *Color:* ${color}%0A` +
+                          `💰 *Price:* ${STORE_CONFIG.currency}${currentSelectedProduct.price} (COD)%0A%0A` +
+                          `👤 *Customer:* ${name}%0A` +
+                          `📞 *Phone:* ${phone}%0A` +
+                          `🏠 *Address:* ${address}%0A` +
+                          `📍 *PIN:* ${pin}`;
 
       if (STORE_CONFIG.telegramBotToken && STORE_CONFIG.telegramChatId) {
-        fetch(`https://api.telegram.org/bot${STORE_CONFIG.telegramBotToken}/sendMessage?chat_id=${STORE_CONFIG.telegramChatId}&text=${orderData}`);
+        // ਸਿੱਧੀ ਘੜੀ ਦੀ ਫ਼ੋਟੋ ਨਾਲ ਆਰਡਰ ਭੇਜਣਾ
+        fetch(`https://api.telegram.org/bot${STORE_CONFIG.telegramBotToken}/sendPhoto?chat_id=${STORE_CONFIG.telegramChatId}&photo=${encodeURIComponent(currentSelectedProduct.image)}&caption=${captionText}&parse_mode=Markdown`)
+          .catch(() => {
+            // ਜੇਕਰ ਫ਼ੋਟੋ ਵਿੱਚ ਕੋਈ ਦਿੱਕਤ ਹੋਵੇ ਤਾਂ ਟੈਕਸਟ ਮੈਸੇਜ ਭੇਜੇਗਾ
+            fetch(`https://api.telegram.org/bot${STORE_CONFIG.telegramBotToken}/sendMessage?chat_id=${STORE_CONFIG.telegramChatId}&text=${captionText}&parse_mode=Markdown`);
+          });
       }
     });
   </script>
 </body>
-      </html>
-      
+</html>

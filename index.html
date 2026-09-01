@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elite Watch Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1 id="storeTitle">⌚ ELITE WATCH STORE ⌚</h1>
+      <p>Cash on Delivery Available | Fast Delivery</p>
+    </div>
+
+    <div class="product-grid" id="productsContainer"></div>
+  </div>
+
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+
+      <form id="orderForm">
+        <h3 id="modalProdName" style="margin-bottom: 10px; font-size:16px; color:#0f172a;"></h3>
+        <p id="modalProdPrice" style="margin-bottom: 12px; color:#059669; font-weight:bold;"></p>
+
+        <div class="form-group">
+          <label>Select Color*</label>
+          <select id="selectedColor" required></select>
+        </div>
+
+        <div class="form-group">
+          <label>Full Name*</label>
+          <input type="text" id="custName" placeholder="Your name" required>
+        </div>
+
+        <div class="form-group">
+          <label>Mobile Number*</label>
+          <input type="tel" id="custPhone" placeholder="10-digit phone number" pattern="[0-9]{10}" required>
+        </div>
+
+        <div class="form-group">
+          <label>Delivery Address*</label>
+          <textarea id="custAddress" rows="2" placeholder="House no, Street, City/Village" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>PIN Code*</label>
+          <input type="number" id="custPin" placeholder="6-digit PIN Code" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Confirm Order (COD)</button>
+      </form>
+
+      <div id="successView">
+        <div style="font-size:45px; color:#16a34a;">✓</div>
+        <h2 style="color: #16a34a; font-size: 18px;">Order Placed Successfully!</h2>
+        <div class="delivery-badge" id="displayDelivery"></div>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Pay cash when product arrives.</p>
+        <button class="back-btn" onclick="closeOrderModal()">⬅ Back to Store</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="ads.js"></script>
+  <script>
+    let currentSelectedProduct = null;
+
+    document.getElementById('storeTitle').innerText = "⌚ " + STORE_CONFIG.storeName + " ⌚";
+    document.getElementById('displayDelivery').innerText = "🚚 Delivery: " + STORE_CONFIG.deliveryTime;
+
+    const container = document.getElementById('productsContainer');
+
+    STORE_CONFIG.products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img src="${p.image}" alt="${p.name}">
+        <div class="card-body">
+          <span class="badge">Cash on Delivery</span>
+          <div class="product-title">${p.name}</div>
+          <div class="product-desc">${p.description}</div>
+          <div class="price-row">
+            <span class="price">${STORE_CONFIG.currency}${p.price}</span>
+            <span class="mrp">${STORE_CONFIG.currency}${p.mrp}</span>
+            <span class="discount">${p.discount}</span>
+          </div>
+          <button class="buy-btn" onclick="openOrderModal(${p.id})">⚡ BUY NOW (COD)</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    function openOrderModal(productId) {
+      currentSelectedProduct = STORE_CONFIG.products.find(p => p.id === productId);
+      if(!currentSelectedProduct) return;
+
+      document.getElementById('modalProdName').innerText = currentSelectedProduct.name;
+      document.getElementById('modalProdPrice').innerText = "Price: " + STORE_CONFIG.currency + currentSelectedProduct.price + " (Cash on Delivery)";
+      
+      const colorSelect = document.getElementById('selectedColor');
+      colorSelect.innerHTML = "";
+      currentSelectedProduct.colors.forEach(c => {
+        let opt = document.createElement('option');
+        opt.value = c;
+        opt.innerText = c;
+        colorSelect.appendChild(opt);
+      });
+
+      document.getElementById('orderModal').style.display = 'flex';
+      document.getElementById('orderForm').style.display = 'block';
+      document.getElementById('successView').style.display = 'none';
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModal').style.display = 'none';
+      document.getElementById('orderForm').reset();
+    }
+
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('custName').value;
+      const phone = document.getElementById('custPhone').value;
+      const address = document.getElementById('custAddress').value;
+      const pin = document.getElementById('custPin').value;
+      const color = document.getElementById('selectedColor').value;
+
+      document.getElementById('orderForm').style.display = 'none';
+      document.getElementById('successView').style.display = 'block';
+
+      if(AD_CONFIG.openAdOnOrder && AD_CONFIG.directLink.startsWith("http")) {
+        window.open(AD_CONFIG.directLink, '_blank');
+      }
+
+      const orderData = `📦 *New Watch Order*%0A` +
+                        `Product: ${currentSelectedProduct.name}%0A` +
+                        `Color: ${color}%0A` +
+                        `Price: ${STORE_CONFIG.currency}${currentSelectedProduct.price} (COD)%0A` +
+                        `Customer: ${name}%0A` +
+                        `Phone: ${phone}%0A` +
+                        `Address: ${address}%0A` +
+                        `PIN: ${pin}`;
+
+      if (STORE_CONFIG.telegramBotToken && STORE_CONFIG.telegramChatId) {
+        fetch(`https://api.telegram.org/bot${STORE_CONFIG.telegramBotToken}/sendMessage?chat_id=${STORE_CONFIG.telegramChatId}&text=${orderData}`);
+      }
+    });
+  </script>
+</body>
+      </html>
+      

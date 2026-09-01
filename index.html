@@ -10,84 +10,87 @@
 
   <div class="container">
     
-    <!-- 1. ਮੇਨ ਦੁਕਾਨ (ਗਰਿੱਡ ਲਿਸਟ) -->
+    <!-- 1. Store Home View -->
     <div id="storeView">
-      <div class="header">
+      <div class="top-header">
         <h1 id="storeTitle">Elite Watch Store</h1>
-        <span style="font-size:12px; color:#2e7d32; font-weight:bold;">🚚 Cash on Delivery</span>
+        <span style="font-size:11px; color:#2e7d32; font-weight:700;">Cash on Delivery</span>
       </div>
       <div class="product-grid" id="productsContainer"></div>
     </div>
 
-    <!-- 2. ਸਿੰਗਲ ਪ੍ਰੋਡਕਟ ਪੇਜ (ਫੋਟੋਆਂ + ਡਿਸਕ੍ਰਿਪਸ਼ਨ + ਆਰਡਰ ਫਾਰਮ) -->
+    <!-- 2. Single Product Details View -->
     <div id="productDetailsView">
-      <div class="top-bar">
-        <button class="back-btn-top" onclick="showStoreView()">⬅ All Watches</button>
+      <div class="nav-bar-detail">
+        <button class="back-btn" onclick="showStoreView()">Back to Store</button>
       </div>
 
-      <img id="detailMainImg" class="main-preview-img" src="" alt="Watch">
+      <img id="detailMainImg" class="main-view-img" src="" alt="Watch">
+      <div class="gallery-row" id="thumbContainer"></div>
 
-      <!-- 4-5 ਛੋਟੀਆਂ ਫ਼ੋਟੋਆਂ -->
-      <div class="thumbnail-row" id="thumbContainer"></div>
-
-      <div class="detail-body">
+      <div class="detail-info">
         <h2 id="detailName" class="detail-title"></h2>
         
-        <div class="price-row" style="margin-bottom: 8px;">
-          <span class="price" id="detailPrice" style="font-size:22px;"></span>
-          <span class="mrp" id="detailMrp" style="font-size:14px;"></span>
+        <div class="price-row" style="margin-bottom: 6px;">
+          <span class="price" id="detailPrice" style="font-size: 20px;"></span>
+          <span class="mrp" id="detailMrp" style="font-size: 13px;"></span>
           <span class="discount" id="detailDiscount"></span>
         </div>
 
-        <div style="font-size:12px; color:#059669; font-weight:bold; margin-bottom:10px;">
-          ✓ Free Delivery & Cash on Delivery Available
-        </div>
+        <span id="detailRating" class="card-rating" style="margin-bottom: 12px; display:inline-block;"></span>
 
-        <!-- ਘੜੀ ਦੀ ਜਾਣਕਾਰੀ (Description) -->
-        <h3 style="font-size:14px; margin-top:10px;">Product Details:</h3>
-        <div class="desc-box" id="detailDesc"></div>
+        <h3 style="font-size: 13px; font-weight: 700; margin-top: 10px;">Product Description:</h3>
+        <div class="desc-card" id="detailDesc"></div>
+      </div>
 
-        <!-- ਆਰਡਰ ਫਾਰਮ -->
-        <div class="order-box">
-          <h3 style="font-size:15px; margin-bottom:12px; color:#9c27b0;">⚡ Enter Delivery Details (COD)</h3>
-          
-          <form id="orderForm">
-            <div class="form-group">
-              <label>Select Strap Color*</label>
-              <select id="selectedColor" required></select>
-            </div>
+      <!-- Bottom Buy Now Bar -->
+      <div class="bottom-buy-bar">
+        <button class="buy-now-trigger" onclick="openOrderModal()">BUY NOW (CASH ON DELIVERY)</button>
+      </div>
+    </div>
 
-            <div class="form-group">
-              <label>Full Name*</label>
-              <input type="text" id="custName" placeholder="Your name" required>
-            </div>
+    <!-- 3. Order Address Form Modal -->
+    <div class="modal-overlay" id="orderModal">
+      <div class="modal-content">
+        <button class="close-modal" onclick="closeOrderModal()">&times;</button>
+        
+        <form id="orderForm">
+          <h3 style="font-size: 14px; margin-bottom: 12px; color: #9c27b0;">Enter Delivery Details</h3>
 
-            <div class="form-group">
-              <label>Mobile Number*</label>
-              <input type="tel" id="custPhone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
-            </div>
-
-            <div class="form-group">
-              <label>House No, Street, City / Village*</label>
-              <textarea id="custAddress" rows="2" placeholder="Full Delivery Address" required></textarea>
-            </div>
-
-            <div class="form-group">
-              <label>PIN Code*</label>
-              <input type="number" id="custPin" placeholder="6-digit PIN code" required>
-            </div>
-
-            <button type="submit" class="submit-btn">ORDER NOW - CASH ON DELIVERY</button>
-          </form>
-
-          <div id="successView">
-            <div style="font-size:50px; color:#16a34a;">✓</div>
-            <h2 style="color: #16a34a; font-size: 18px; margin: 10px 0;">Order Placed Successfully!</h2>
-            <p style="font-size: 13px; color: #64748b; margin-bottom: 14px;">Delivery in 4-5 Days. Pay Cash on Delivery.</p>
-            <button class="submit-btn" style="background:#212121;" onclick="showStoreView()">Continue Shopping</button>
+          <div class="form-group">
+            <label>Select Color / Strap*</label>
+            <select id="selectedColor" required></select>
           </div>
-        </div>
 
+          <div class="form-group">
+            <label>Full Name*</label>
+            <input type="text" id="custName" placeholder="Your full name" required>
+          </div>
+
+          <div class="form-group">
+            <label>Mobile Number*</label>
+            <input type="tel" id="custPhone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+          </div>
+
+          <div class="form-group">
+            <label>Delivery Address*</label>
+            <textarea id="custAddress" rows="2" placeholder="House no, Area, Village/City" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>PIN Code*</label>
+            <input type="number" id="custPin" placeholder="6-digit PIN code" required>
+          </div>
+
+          <button type="submit" class="submit-btn">CONFIRM ORDER</button>
+        </form>
+
+        <div id="successView">
+          <div style="font-size: 45px; color: #16a34a;">✓</div>
+          <h2 style="color: #16a34a; font-size: 17px; margin: 8px 0;">Order Placed Successfully!</h2>
+          <p style="font-size: 12px; color: #64748b; margin-bottom: 14px;">Delivery in 4-5 Days. Pay cash on arrival.</p>
+          <button class="submit-btn" style="background:#212121;" onclick="closeOrderModal(); showStoreView();">Continue Shopping</button>
+        </div>
       </div>
     </div>
 
@@ -97,10 +100,9 @@
   <script src="ads.js"></script>
   <script>
     let activeProduct = null;
-
     document.getElementById('storeTitle').innerText = STORE_CONFIG.storeName;
 
-    // ਮੇਨ ਗਰਿੱਡ ਲੋਡ ਕਰਨਾ
+    // Load Grid
     const container = document.getElementById('productsContainer');
     STORE_CONFIG.products.forEach(p => {
       const card = document.createElement('div');
@@ -108,19 +110,20 @@
       card.onclick = () => openProductPage(p.id);
       card.innerHTML = `
         <img src="${p.mainImage}" alt="${p.name}">
-        <div class="card-body">
-          <div class="product-title">${p.name}</div>
+        <div class="card-info">
+          <div class="card-title">${p.name}</div>
           <div class="price-row">
             <span class="price">${STORE_CONFIG.currency}${p.price}</span>
             <span class="mrp">${STORE_CONFIG.currency}${p.mrp}</span>
             <span class="discount">${p.discount}</span>
           </div>
+          <span class="card-rating">${p.rating}</span>
         </div>
       `;
       container.appendChild(card);
     });
 
-    // ਪ੍ਰੋਡਕਟ ਪੇਜ ਖੋਲ੍ਹਣਾ
+    // Open Single Product Page
     function openProductPage(id) {
       activeProduct = STORE_CONFIG.products.find(item => item.id === id);
       if(!activeProduct) return;
@@ -134,24 +137,32 @@
       document.getElementById('detailPrice').innerText = STORE_CONFIG.currency + activeProduct.price;
       document.getElementById('detailMrp').innerText = STORE_CONFIG.currency + activeProduct.mrp;
       document.getElementById('detailDiscount').innerText = activeProduct.discount;
+      document.getElementById('detailRating').innerText = activeProduct.rating;
       document.getElementById('detailDesc').innerText = activeProduct.description;
 
-      // ਛੋਟੀਆਂ ਫ਼ੋਟੋਆਂ (Thumbnails)
+      // Gallery Thumbnails
       const thumbBox = document.getElementById('thumbContainer');
       thumbBox.innerHTML = '';
       activeProduct.images.forEach((imgUrl, index) => {
         const thumb = document.createElement('img');
         thumb.src = imgUrl;
-        thumb.className = `thumb-img ${index === 0 ? 'active' : ''}`;
+        thumb.className = `thumb-item ${index === 0 ? 'active' : ''}`;
         thumb.onclick = () => {
           document.getElementById('detailMainImg').src = imgUrl;
-          document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
           thumb.classList.add('active');
         };
         thumbBox.appendChild(thumb);
       });
+    }
 
-      // ਰੰਗ ਸਿਲੈਕਟ
+    function showStoreView() {
+      document.getElementById('productDetailsView').style.display = 'none';
+      document.getElementById('storeView').style.display = 'block';
+    }
+
+    // Modal Control
+    function openOrderModal() {
       const colorSelect = document.getElementById('selectedColor');
       colorSelect.innerHTML = '';
       activeProduct.colors.forEach(c => {
@@ -163,14 +174,14 @@
 
       document.getElementById('orderForm').style.display = 'block';
       document.getElementById('successView').style.display = 'none';
+      document.getElementById('orderModal').style.display = 'flex';
     }
 
-    function showStoreView() {
-      document.getElementById('productDetailsView').style.display = 'none';
-      document.getElementById('storeView').style.display = 'block';
+    function closeOrderModal() {
+      document.getElementById('orderModal').style.display = 'none';
     }
 
-    // ਆਰਡਰ ਸਬਮਿਟ
+    // Submit Order
     document.getElementById('orderForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
